@@ -4,21 +4,19 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 public class Bullet extends Thread {
-
-	private Motor motor;
+	
 	private int PosX;
 	private int PosY;
-	private int vel;
+	private int speed;
 	private int width;
 	private int heigh;
 
-	public Bullet(int posX, int posY, Motor motor) {
-		this.motor = motor;
-		this.vel = 5;
+	public Bullet(int posX, int posY, int heigh,int width,int speed) {		
+		this.speed = speed;//5
 		this.PosX = posX;
 		this.PosY = posY;
-		this.heigh = 57;
-		this.width = 22;
+		this.heigh = heigh;//57
+		this.width = width;//22
 	}
 
 	public int getWidth() {
@@ -46,11 +44,11 @@ public class Bullet extends Thread {
 	}
 
 	public int getSpeed() {
-		return vel;
+		return speed;
 	}
 
 	public void move() {
-		this.PosY -= this.vel;
+		this.PosY -= this.speed;
 		if (this.PosY <= 0)
 			this.delete();
 
@@ -61,7 +59,7 @@ public class Bullet extends Thread {
 	}
 
 	public void delete() {
-		ArrayList alSecuencias = motor.getBulletSeries();
+		ArrayList<Bullet> alSecuencias = WholeObjectsSingleton.getInstance().getBulletSeries();
 		for (int cont = 0; cont < alSecuencias.size(); cont++) {
 			if (alSecuencias.get(cont) == this) {
 				alSecuencias.remove(cont);

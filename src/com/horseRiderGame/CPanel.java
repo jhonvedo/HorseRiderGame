@@ -2,38 +2,37 @@ package com.horseRiderGame;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Random;
-
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class CPanel extends JPanel implements KeyListener {
-	private Motor motor;
+		
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private BufferedImage objectiveImg, horseriderImg, bulletImg, wallpaperImg;
 	private HorseRider horserider;
 
-	public CPanel(Motor motor) {
-
-		this.motor = motor;
-		this.setSize(600, 600);
+	public CPanel() {			
 		this.loadImages();
-		horserider = new HorseRider(motor);
-		horserider.setPositionY(this.getHeight() - horserider.getHeigth() + 30);
-
+		horserider = new HorseRider(4,22,horseriderImg.getHeight(),horseriderImg.getHeight());
+	}
+	
+	public void setPanelSize(int width, int height) {
+		this.setSize(width, height);
+		System.out.println("panel HEIGH :"+this.getHeight()+" horse:"+horserider.getHeigth());		
+		horserider.setPositionY(height - horserider.getHeigth()-20);
 	}
 
 	private void loadImages() {
-		try {
-
+		try {			
 			wallpaperImg = ImageIO.read(new File("src/images/fondo.jpg"));
 			objectiveImg = ImageIO.read(new File("src/images/globo.png"));
 			horseriderImg = ImageIO.read(new File("src/images/montado.png"));
@@ -53,8 +52,8 @@ public class CPanel extends JPanel implements KeyListener {
 	}
 
 	private void draw(Graphics g) {
-		if (motor.getObjectiveSeries().size() != 0) {
-			ArrayList<Objective> aux = motor.getObjectiveSeries();
+		if (WholeObjectsSingleton.getInstance().getObjectiveSeries().size() != 0) {
+			ArrayList<Objective> aux = WholeObjectsSingleton.getInstance().getObjectiveSeries();
 			for (int cont = 0; cont < aux.size(); cont++) {
 				Objective e = aux.get(cont);
 				g.drawImage(objectiveImg, e.getPositionX(), e.getPositionY(), e.getPositionX() + e.getWidth(),
@@ -66,8 +65,8 @@ public class CPanel extends JPanel implements KeyListener {
 				horserider.getPositionY() + horserider.getHeigth(), horserider.getBoxNumber() * horserider.getWidth(), 0,
 				horserider.getBoxNumber() * horserider.getWidth() + horserider.getWidth(), horserider.getHeigth(), null);
 
-		if (motor.getBulletSeries().size() != 0) {
-			ArrayList<Bullet> aux = motor.getBulletSeries();
+		if (WholeObjectsSingleton.getInstance().getBulletSeries().size() != 0) {
+			ArrayList<Bullet> aux = WholeObjectsSingleton.getInstance().getBulletSeries();
 
 			for (int cont = 0; cont < aux.size(); cont++) {
 				Bullet e = aux.get(cont);
@@ -100,11 +99,12 @@ public class CPanel extends JPanel implements KeyListener {
 				horserider.setBoxNumber(0);
 			break;
 		case KeyEvent.VK_DOWN:
-			motor.getObjectiveSeries().add(new Objective(motor));
+			WholeObjectsSingleton.getInstance().getObjectiveSeries().add(new Objective(6,objectiveImg.getHeight(),objectiveImg.getHeight()));
 			break;
 		case KeyEvent.VK_UP:
-			motor.getBulletSeries().add(new Bullet(horserider.getPositionX() + (horserider.getWidth() / 2),
-					this.getHeight() - horserider.getHeigth() + 30, motor));
+			int posx = horserider.getPositionX() + (horserider.getWidth() / 2);
+			int posy = this.getHeight() - horserider.getHeigth() + 30;
+			WholeObjectsSingleton.getInstance().getBulletSeries().add(new Bullet(posx,posy,bulletImg.getHeight(),22,5));
 			break;
 		}
 
@@ -124,16 +124,16 @@ public class CPanel extends JPanel implements KeyListener {
 
 	public void move() {
 
-		ArrayList<Objective> bola = motor.getObjectiveSeries();
-		ArrayList<Bullet> bala = motor.getBulletSeries();
-		if (motor.getObjectiveSeries().size() != 0) {
+		ArrayList<Objective> bola = WholeObjectsSingleton.getInstance().getObjectiveSeries();
+		ArrayList<Bullet> bala = WholeObjectsSingleton.getInstance().getBulletSeries();
+		if (WholeObjectsSingleton.getInstance().getObjectiveSeries().size() != 0) {
 			for (int cont = 0; cont < bola.size(); cont++) {
 				Objective e = bola.get(cont);
 				e.move(this.getWidth(), this.getHeight());
 			}
 		}
 
-		if (motor.getBulletSeries().size() != 0) {
+		if (WholeObjectsSingleton.getInstance().getBulletSeries().size() != 0) {
 			for (int cont = 0; cont < bala.size(); cont++) {
 				Bullet a = bala.get(cont);
 				if (a.getPositionX() == (a.getHeigh() * -1))
@@ -147,10 +147,10 @@ public class CPanel extends JPanel implements KeyListener {
 
 	private void detectCollision(ArrayList<Objective> bola, ArrayList<Bullet> bala) {
 
-		if (motor.getObjectiveSeries().size() != 0) {
+		if (WholeObjectsSingleton.getInstance().getObjectiveSeries().size() != 0) {
 			for (int cont = 0; cont < bola.size(); cont++) {
 				Objective e = bola.get(cont);
-				if (motor.getBulletSeries().size() != 0) {
+				if (WholeObjectsSingleton.getInstance().getBulletSeries().size() != 0) {
 					for (int i = 0; i < bala.size(); i++) {
 						Bullet a = bala.get(i);
 

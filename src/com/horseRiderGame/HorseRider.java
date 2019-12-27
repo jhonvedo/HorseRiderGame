@@ -8,18 +8,16 @@ public class HorseRider {
 	private int width;
 	private int heigth;
 	@SuppressWarnings("unused")
-	private int numseries;
-	private Motor motor;
+	private int numseries;	
 
-	public HorseRider(Motor motor) {
-		this.motor = motor;
+	public HorseRider(int numSeries,int movePixel,int heigth,int width) {		
 		this.posX = 0;
 		this.posY = 0;
 		this.boxNumber = 0;
-		this.numseries = 4;
-		this.move = 22;
-		this.heigth = 151;
-		this.width = 152;
+		this.numseries = numSeries;//4
+		this.move = movePixel;//22
+		this.heigth = heigth;//151
+		this.width = width;//152
 
 	}
 

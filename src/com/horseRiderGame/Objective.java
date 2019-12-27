@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Objective extends Thread {
-	private Motor motor;
+	
 	private int width;
 	private int heigth;
 	private int PosX;
@@ -17,17 +17,17 @@ public class Objective extends Thread {
 	private Random rnd;
 	private boolean exploit;
 
-	public Objective(Motor motor) {
+	public Objective(int boxSize,int heigth,int width) {
 		rnd = new Random();
-		this.motor = motor;
+	
 		this.PosX = 0;
 		this.PosY = 0;
 		this.velX = rnd.nextInt(5) + 1;
 		this.velY = rnd.nextInt(5) + 1;
-		this.boxSize = 6;
+		this.boxSize = boxSize;//6
 		this.boxNumber = 0;
-		this.heigth = 38;
-		this.width = 42;
+		this.heigth = heigth;//38
+		this.width = width;//42
 		this.exploit = false;
 		this.start();
 
@@ -92,7 +92,7 @@ public class Objective extends Thread {
 					boxNumber++;
 			}
 		}
-		ArrayList alSecuencias = motor.getObjectiveSeries();
+		ArrayList<Objective> alSecuencias = WholeObjectsSingleton.getInstance().getObjectiveSeries();
 		for (int cont = 0; cont < alSecuencias.size(); cont++) {
 			if (alSecuencias.get(cont) == this) {
 				alSecuencias.remove(cont);
