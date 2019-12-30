@@ -1,10 +1,10 @@
 package com.horseRiderGame;
 
-public class Motor extends Thread {	
+public class Motor extends Thread {
 	private CFrame frame;
 
-	public Motor(CFrame frame) {	
-		this.frame = frame;				
+	public Motor(CFrame frame) {
+		this.frame = frame;
 		this.start();
 	}
 
@@ -21,5 +21,5 @@ public class Motor extends Thread {
 		}
 
 	}
-	
+
 }

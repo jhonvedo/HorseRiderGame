@@ -6,74 +6,93 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import com.horseRiderGame.Objects.Bullet;
+import com.horseRiderGame.Objects.HorseRider;
+import com.horseRiderGame.Objects.Objective;
+import com.hourseRiderGame.model.Directions;
+
 public class CPanel extends JPanel implements KeyListener {
-		
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
 	private BufferedImage objectiveImg, horseriderImg, bulletImg, wallpaperImg;
-	private HorseRider horserider;
+	private HorseRider horserider;	
+	private final int sequenceCountObjective = 5;
 
-	public CPanel() {			
+	public CPanel() throws IOException {
 		this.loadImages();
-		horserider = new HorseRider(4,22,horseriderImg.getHeight(),horseriderImg.getHeight());
+		horserider = new HorseRider(4, 22, horseriderImg.getHeight(), horseriderImg.getHeight());
 	}
-	
+
 	public void setPanelSize(int width, int height) {
 		this.setSize(width, height);
-		System.out.println("panel HEIGH :"+this.getHeight()+" horse:"+horserider.getHeigth());		
-		horserider.setPositionY(height - horserider.getHeigth()-20);
+		horserider.setPositionY(height - horserider.getHeigth() - 85);
 	}
 
-	private void loadImages() {
-		try {			
-			wallpaperImg = ImageIO.read(new File("src/images/fondo.jpg"));
-			objectiveImg = ImageIO.read(new File("src/images/globo.png"));
-			horseriderImg = ImageIO.read(new File("src/images/montado.png"));
-			bulletImg = ImageIO.read(new File("src/images/fle.png"));
-		} catch (Exception e) {
-
-		}
+	private void loadImages() throws IOException {
+		wallpaperImg = ImageIO.read(new File("src/images/fondo.jpg"));
+		objectiveImg = ImageIO.read(new File("src/images/globo.png"));
+		horseriderImg = ImageIO.read(new File("src/images/montado.png"));
+		bulletImg = ImageIO.read(new File("src/images/bullet.png"));
 	}
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.setColor(Color.white);
-		g.fillRect(0, 0, 600, 600);
-		g.drawImage(wallpaperImg, 0, 0, 600, 600, null);
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());		
+		g.drawImage(wallpaperImg, 0, 0, this.getWidth(), this.getHeight(), null);
 		draw(g);
 
 	}
 
 	private void draw(Graphics g) {
 		if (WholeObjectsSingleton.getInstance().getObjectiveSeries().size() != 0) {
-			ArrayList<Objective> aux = WholeObjectsSingleton.getInstance().getObjectiveSeries();
-			for (int cont = 0; cont < aux.size(); cont++) {
-				Objective e = aux.get(cont);
-				g.drawImage(objectiveImg, e.getPositionX(), e.getPositionY(), e.getPositionX() + e.getWidth(),
-						e.getPositionY() + e.getHeigth(), e.getBoxNumber() * e.getWidth(), 0,
-						e.getBoxNumber() * e.getWidth() + e.getWidth(), e.getHeigth(), null);
-			}
+			drawObjectives(g);
 		}
-		g.drawImage(horseriderImg, horserider.getPositionX(), horserider.getPositionY(), horserider.getPositionX() + horserider.getWidth(),
-				horserider.getPositionY() + horserider.getHeigth(), horserider.getBoxNumber() * horserider.getWidth(), 0,
-				horserider.getBoxNumber() * horserider.getWidth() + horserider.getWidth(), horserider.getHeigth(), null);
+
+		drawHorseRider(g);
 
 		if (WholeObjectsSingleton.getInstance().getBulletSeries().size() != 0) {
-			ArrayList<Bullet> aux = WholeObjectsSingleton.getInstance().getBulletSeries();
+			drawBullets(g);
 
-			for (int cont = 0; cont < aux.size(); cont++) {
-				Bullet e = aux.get(cont);
-				g.drawImage(bulletImg, e.getPositionX(), e.getPositionY(), e.getPositionX() + e.getWidth(), e.getPositionY() + e.getHeigh(), 0,
-						0, horserider.getWidth(), horserider.getHeigth(), null);
-			}
 		}
+	}
+
+	private void drawHorseRider(Graphics g) {
+		g.drawImage(horseriderImg, horserider.getPositionX(), horserider.getPositionY(),
+				horserider.getPositionX() + horserider.getWidth(), horserider.getPositionY() + horserider.getHeigth(),
+				horserider.getSequenceIndex() * horserider.getWidth(), 0,
+				horserider.getSequenceIndex() * horserider.getWidth() + horserider.getWidth(), horserider.getHeigth(),
+				null);
+
+	}
+
+	private void drawBullets(Graphics g) {
+		for (Bullet item : WholeObjectsSingleton.getInstance().getBulletSeries()) {
+
+			g.drawImage(bulletImg, 
+					item.getPositionX(), item.getPositionY(), 
+					item.getPositionX() + item.getWidth(),item.getPositionY() + item.getHeigth(),
+					0, 0, horserider.getWidth(), horserider.getPositionY(), null);
+		}
+
+	}
+
+	private void drawObjectives(Graphics g) {
+		for (Objective item : WholeObjectsSingleton.getInstance().getObjectiveSeries()) {
+			g.drawImage(objectiveImg, item.getPositionX(), item.getPositionY(), item.getPositionX() + item.getWidth(),
+					item.getPositionY() + item.getHeigth(), item.getSequenceIndex() * item.getWidth(), 0,
+					item.getSequenceIndex() * item.getWidth() + item.getWidth(), item.getHeigth(), null);
+		}
+
 	}
 
 	@Override
@@ -81,30 +100,37 @@ public class CPanel extends JPanel implements KeyListener {
 		switch (e.getKeyCode()) {
 
 		case KeyEvent.VK_RIGHT:
+			horserider.setDirection(Directions.RIGHT);
 			if (horserider.getPositionX() < this.getWidth() - horserider.getWidth())
-				horserider.moveRight();
+				horserider.move();
 
-			if (horserider.getBoxNumber() + 1 < 4)
-				horserider.setBoxNumber(horserider.getBoxNumber() + 1);
+			if (horserider.getSequenceIndex() + 1 < 7 && horserider.getSequenceIndex() + 1 >= 5)
+				horserider.setSequenceIndex(horserider.getSequenceIndex() + 1);
 			else
-				horserider.setBoxNumber(0);
+				horserider.setSequenceIndex(4);
 			break;
 		case KeyEvent.VK_LEFT:
+			horserider.setDirection(Directions.LEFT);
 			if (horserider.getPositionX() > 0)
-				horserider.moveLeft();
+				horserider.move();
 
-			if (horserider.getBoxNumber() + 1 < 4)
-				horserider.setBoxNumber(horserider.getBoxNumber() + 1);
+			if (horserider.getSequenceIndex() + 1 < 4 && horserider.getSequenceIndex() + 1 >= 2)
+				horserider.setSequenceIndex(horserider.getSequenceIndex() + 1);
 			else
-				horserider.setBoxNumber(0);
+				horserider.setSequenceIndex(1);
 			break;
 		case KeyEvent.VK_DOWN:
-			WholeObjectsSingleton.getInstance().getObjectiveSeries().add(new Objective(6,objectiveImg.getHeight(),objectiveImg.getHeight()));
+			Objective objective = new Objective(sequenceCountObjective, objectiveImg.getHeight(),objectiveImg.getHeight());
+			objective.setContainerHeigth(this.getHeight());
+			objective.setContainerWidth(this.getWidth());
+			WholeObjectsSingleton.getInstance().getObjectiveSeries().add(objective);
 			break;
 		case KeyEvent.VK_UP:
 			int posx = horserider.getPositionX() + (horserider.getWidth() / 2);
-			int posy = this.getHeight() - horserider.getHeigth() + 30;
-			WholeObjectsSingleton.getInstance().getBulletSeries().add(new Bullet(posx,posy,bulletImg.getHeight(),22,5));
+			int posy = horserider.getPositionY();
+			Bullet bullet = new Bullet(posx, posy, bulletImg.getHeight(), bulletImg.getWidth(), 5);
+			horserider.setSequenceIndex(0);
+			WholeObjectsSingleton.getInstance().getBulletSeries().add(bullet);
 			break;
 		}
 
@@ -124,46 +150,44 @@ public class CPanel extends JPanel implements KeyListener {
 
 	public void move() {
 
-		ArrayList<Objective> bola = WholeObjectsSingleton.getInstance().getObjectiveSeries();
-		ArrayList<Bullet> bala = WholeObjectsSingleton.getInstance().getBulletSeries();
-		if (WholeObjectsSingleton.getInstance().getObjectiveSeries().size() != 0) {
-			for (int cont = 0; cont < bola.size(); cont++) {
-				Objective e = bola.get(cont);
-				e.move(this.getWidth(), this.getHeight());
+		ArrayList<Objective> objectives = WholeObjectsSingleton.getInstance().getObjectiveSeries();
+		ArrayList<Bullet> bullets = WholeObjectsSingleton.getInstance().getBulletSeries();
+		if (objectives.size() != 0) {
+			for (int cont = 0; cont < objectives.size(); cont++) {
+				Objective objective = objectives.get(cont);
+				objective.move();
 			}
 		}
 
-		if (WholeObjectsSingleton.getInstance().getBulletSeries().size() != 0) {
-			for (int cont = 0; cont < bala.size(); cont++) {
-				Bullet a = bala.get(cont);
-				if (a.getPositionX() == (a.getHeigh() * -1))
-					bala.remove(cont);
-				a.move();
+		if (bullets.size() != 0) {
+			for (int cont = 0; cont < bullets.size(); cont++) {
+				Bullet bullet = bullets.get(cont);
+				if (bullet.getPositionX() == (bullet.getHeigth() * -1))
+					bullets.remove(cont);
+				bullet.move();
 			}
 		}
-		detectCollision(bola, bala);
+		detectCollision(objectives, bullets);
 
 	}
 
-	private void detectCollision(ArrayList<Objective> bola, ArrayList<Bullet> bala) {
+	private void detectCollision(ArrayList<Objective> objectives, ArrayList<Bullet> bullets) {
 
-		if (WholeObjectsSingleton.getInstance().getObjectiveSeries().size() != 0) {
-			for (int cont = 0; cont < bola.size(); cont++) {
-				Objective e = bola.get(cont);
-				if (WholeObjectsSingleton.getInstance().getBulletSeries().size() != 0) {
-					for (int i = 0; i < bala.size(); i++) {
-						Bullet a = bala.get(i);
+		if (objectives.size() != 0) {
+			for (int cont = 0; cont < objectives.size(); cont++) {
+				Objective objective = objectives.get(cont);
+				if (bullets.size() != 0) {
+					for (int i = 0; i < bullets.size(); i++) {
+						Bullet bullet = bullets.get(i);
 
-						if (e.getRectangle().intersects(a.getRectBala())) {
-							e.exploit();
-							a.delete();
-
+						if (objective.getRectangle().intersects(bullet.getRectangle())) {
+							objective.exploit();
+							bullet.delete();
 						}
 					}
 
 				}
 			}
-
 		}
 
 	}

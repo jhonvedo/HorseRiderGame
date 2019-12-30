@@ -2,18 +2,22 @@ package com.horseRiderGame;
 
 import java.util.ArrayList;
 
+import com.horseRiderGame.Objects.Bullet;
+import com.horseRiderGame.Objects.Objective;
+
 public class WholeObjectsSingleton {
 	private ArrayList<Objective> objectiveSeries;
 	private ArrayList<Bullet> bulletSeries;
 	private static WholeObjectsSingleton _instance;
-	
+
 	private WholeObjectsSingleton() {
 		setObjectiveSeries(new ArrayList<Objective>());
 		setBulletSeries(new ArrayList<Bullet>());
 	}
-	
+
 	public static WholeObjectsSingleton getInstance() {
-		if(_instance == null) _instance = new WholeObjectsSingleton();
+		if (_instance == null)
+			_instance = new WholeObjectsSingleton();
 		return _instance;
 	}
 
