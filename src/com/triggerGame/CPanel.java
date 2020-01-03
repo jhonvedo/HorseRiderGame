@@ -1,20 +1,20 @@
-package com.horseRiderGame;
+package com.triggerGame;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-import com.horseRiderGame.Objects.Bullet;
-import com.horseRiderGame.Objects.HorseRider;
-import com.horseRiderGame.Objects.Objective;
-import com.hourseRiderGame.model.Directions;
+import com.triggerGame.Objects.Bullet;
+import com.triggerGame.Objects.Trigger;
+import com.triggerGame.Objects.Objective;
+import com.triggerGame.model.Directions;
+
 
 public class CPanel extends JPanel implements KeyListener {
 
@@ -23,32 +23,38 @@ public class CPanel extends JPanel implements KeyListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private BufferedImage objectiveImg, horseriderImg, bulletImg, wallpaperImg;
-	private HorseRider horserider;	
+	private BufferedImage objectiveImg, triggerImg, bulletImg, backgroundImg;
+	private Trigger trigger;	
+	private final int bulletSpeed = 5;
 	private final int sequenceCountObjective = 5;
+	private final int sequenceCountTrigger = 7;
+	private final int triggerShootsIndex = 0;
+	private final int triggerLeftMoveIndex = 1;
+	private final int triggerRightMoveIndex = 4;
 
 	public CPanel() throws IOException {
 		this.loadImages();
-		horserider = new HorseRider(4, 22, horseriderImg.getHeight(), horseriderImg.getHeight());
+		trigger = new Trigger(sequenceCountTrigger, 22, triggerImg.getHeight(), triggerImg.getHeight());
 	}
 
 	public void setPanelSize(int width, int height) {
 		this.setSize(width, height);
-		horserider.setPositionY(height - horserider.getHeigth() - 85);
+		trigger.setPositionY(height - trigger.getHeigth() - 85);
 	}
 
-	private void loadImages() throws IOException {
-		wallpaperImg = ImageIO.read(new File("src/images/fondo.jpg"));
-		objectiveImg = ImageIO.read(new File("src/images/globo.png"));
-		horseriderImg = ImageIO.read(new File("src/images/montado.png"));
-		bulletImg = ImageIO.read(new File("src/images/bullet.png"));
+	private void loadImages() throws IOException {	
+		
+		backgroundImg = ImageIO.read(Main.class.getResource("/resources/background.jpg"));
+		objectiveImg = ImageIO.read( Main.class.getResource("/resources/objective.png"));
+		triggerImg = ImageIO.read(Main.class.getResource("/resources/trigger.png"));
+		bulletImg = ImageIO.read(Main.class.getResource("/resources/bullet.png"));
 	}
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.setColor(Color.white);
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());		
-		g.drawImage(wallpaperImg, 0, 0, this.getWidth(), this.getHeight(), null);
+		g.drawImage(backgroundImg, 0, 0, this.getWidth(), this.getHeight(), null);
 		draw(g);
 
 	}
@@ -67,10 +73,10 @@ public class CPanel extends JPanel implements KeyListener {
 	}
 
 	private void drawHorseRider(Graphics g) {
-		g.drawImage(horseriderImg, horserider.getPositionX(), horserider.getPositionY(),
-				horserider.getPositionX() + horserider.getWidth(), horserider.getPositionY() + horserider.getHeigth(),
-				horserider.getSequenceIndex() * horserider.getWidth(), 0,
-				horserider.getSequenceIndex() * horserider.getWidth() + horserider.getWidth(), horserider.getHeigth(),
+		g.drawImage(triggerImg, trigger.getPositionX(), trigger.getPositionY(),
+				trigger.getPositionX() + trigger.getWidth(), trigger.getPositionY() + trigger.getHeigth(),
+				trigger.getSequenceIndex() * trigger.getWidth(), 0,
+				trigger.getSequenceIndex() * trigger.getWidth() + trigger.getWidth(), trigger.getHeigth(),
 				null);
 
 	}
@@ -81,7 +87,7 @@ public class CPanel extends JPanel implements KeyListener {
 			g.drawImage(bulletImg, 
 					item.getPositionX(), item.getPositionY(), 
 					item.getPositionX() + item.getWidth(),item.getPositionY() + item.getHeigth(),
-					0, 0, horserider.getWidth(), horserider.getPositionY(), null);
+					0, 0, trigger.getWidth(), trigger.getPositionY(), null);
 		}
 
 	}
@@ -100,24 +106,20 @@ public class CPanel extends JPanel implements KeyListener {
 		switch (e.getKeyCode()) {
 
 		case KeyEvent.VK_RIGHT:
-			horserider.setDirection(Directions.RIGHT);
-			if (horserider.getPositionX() < this.getWidth() - horserider.getWidth())
-				horserider.move();
-
-			if (horserider.getSequenceIndex() + 1 < 7 && horserider.getSequenceIndex() + 1 >= 5)
-				horserider.setSequenceIndex(horserider.getSequenceIndex() + 1);
-			else
-				horserider.setSequenceIndex(4);
+			trigger.setDirection(Directions.RIGHT);
+			if (trigger.getPositionX() < this.getWidth() - trigger.getWidth()) {
+				trigger.move();
+				trigger.setSequenceIndex(getTriggerMoveRightIndex());				
+			}
+				
 			break;
 		case KeyEvent.VK_LEFT:
-			horserider.setDirection(Directions.LEFT);
-			if (horserider.getPositionX() > 0)
-				horserider.move();
-
-			if (horserider.getSequenceIndex() + 1 < 4 && horserider.getSequenceIndex() + 1 >= 2)
-				horserider.setSequenceIndex(horserider.getSequenceIndex() + 1);
-			else
-				horserider.setSequenceIndex(1);
+			trigger.setDirection(Directions.LEFT);
+			if (trigger.getPositionX() > 0) {
+				trigger.move();
+				trigger.setSequenceIndex(getTriggerMoveLeftIndex());
+			}
+				
 			break;
 		case KeyEvent.VK_DOWN:
 			Objective objective = new Objective(sequenceCountObjective, objectiveImg.getHeight(),objectiveImg.getHeight());
@@ -126,14 +128,28 @@ public class CPanel extends JPanel implements KeyListener {
 			WholeObjectsSingleton.getInstance().getObjectiveSeries().add(objective);
 			break;
 		case KeyEvent.VK_UP:
-			int posx = horserider.getPositionX() + (horserider.getWidth() / 2);
-			int posy = horserider.getPositionY();
-			Bullet bullet = new Bullet(posx, posy, bulletImg.getHeight(), bulletImg.getWidth(), 5);
-			horserider.setSequenceIndex(0);
+			int posx = trigger.getPositionX() + (trigger.getWidth() / 2);
+			int posy = trigger.getPositionY();
+			Bullet bullet = new Bullet(posx, posy, bulletImg.getHeight(), bulletImg.getWidth(), bulletSpeed);
+			trigger.setSequenceIndex(triggerShootsIndex);
 			WholeObjectsSingleton.getInstance().getBulletSeries().add(bullet);
 			break;
 		}
 
+	}
+
+	private int getTriggerMoveRightIndex() {
+		if (trigger.getSequenceIndex() + 1 < sequenceCountTrigger && trigger.getSequenceIndex() >= triggerRightMoveIndex)
+			return trigger.getSequenceIndex() + 1;
+		else
+			return triggerRightMoveIndex;
+	}
+
+	private int getTriggerMoveLeftIndex() {
+		if (trigger.getSequenceIndex() < triggerRightMoveIndex && trigger.getSequenceIndex() >= triggerLeftMoveIndex)
+			return trigger.getSequenceIndex() + 1;
+		else
+			return triggerLeftMoveIndex;
 	}
 
 	@Override

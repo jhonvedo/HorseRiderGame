@@ -1,9 +1,9 @@
-package com.horseRiderGame;
+package com.triggerGame;
 
 import java.util.ArrayList;
 
-import com.horseRiderGame.Objects.Bullet;
-import com.horseRiderGame.Objects.Objective;
+import com.triggerGame.Objects.Bullet;
+import com.triggerGame.Objects.Objective;
 
 public class WholeObjectsSingleton {
 	private ArrayList<Objective> objectiveSeries;

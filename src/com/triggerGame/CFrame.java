@@ -1,4 +1,4 @@
-package com.horseRiderGame;
+package com.triggerGame;
 
 import java.awt.Dimension;
 import javax.swing.JFrame;
@@ -12,7 +12,7 @@ public class CFrame extends JFrame {
 	private CPanel panel;
 
 	public CFrame(CPanel panel, int width, int heigh) {
-		super("Tirale a las esferas :p");
+		super("Trigger Game");
 		configureFrame(width, heigh);
 		configurePanel(panel);
 

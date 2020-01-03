@@ -1,8 +1,8 @@
-package com.horseRiderGame;
+package com.triggerGame;
 
 import java.awt.Rectangle;
 
-import com.hourseRiderGame.model.Directions;
+import com.triggerGame.model.Directions;
 
 public abstract class CComponent extends Thread {
 	private int width, heigth;

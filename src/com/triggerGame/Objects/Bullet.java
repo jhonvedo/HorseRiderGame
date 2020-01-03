@@ -1,9 +1,8 @@
-package com.horseRiderGame.Objects;
+package com.triggerGame.Objects;
 
-import java.util.ArrayList;
 
-import com.horseRiderGame.CComponent;
-import com.horseRiderGame.WholeObjectsSingleton;
+import com.triggerGame.CComponent;
+import com.triggerGame.WholeObjectsSingleton;
 
 public class Bullet extends CComponent {
 

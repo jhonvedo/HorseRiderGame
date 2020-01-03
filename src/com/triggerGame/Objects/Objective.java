@@ -1,10 +1,9 @@
-package com.horseRiderGame.Objects;
+package com.triggerGame.Objects;
 
-import java.util.ArrayList;
 import java.util.Random;
 
-import com.horseRiderGame.CComponent;
-import com.horseRiderGame.WholeObjectsSingleton;
+import com.triggerGame.CComponent;
+import com.triggerGame.WholeObjectsSingleton;
 
 public class Objective extends CComponent {
 

@@ -1,4 +1,4 @@
-package com.horseRiderGame;
+package com.triggerGame;
 
 public class Motor extends Thread {
 	private CFrame frame;

@@ -1,4 +1,4 @@
-package com.hourseRiderGame.model;
+package com.triggerGame.model;
 
 public enum Directions {
 	LEFT, RIGHT, NONE

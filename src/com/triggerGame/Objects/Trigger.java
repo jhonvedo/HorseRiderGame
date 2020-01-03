@@ -1,15 +1,15 @@
-package com.horseRiderGame.Objects;
+package com.triggerGame.Objects;
 
-import com.horseRiderGame.CComponent;
-import com.hourseRiderGame.model.Directions;
+import com.triggerGame.CComponent;
+import com.triggerGame.model.Directions;
 
-public class HorseRider extends CComponent {
+public class Trigger extends CComponent {
 
-	public HorseRider(int sequenceCount, int speedX, int heigth, int width) {
+	public Trigger(int sequenceCount, int speedX, int heigth, int width) {
 		this.setPositionX(0);
 		this.setPositionY(0);
 		this.setSequenceIndex(0);
-		this.setSequenceCount(sequenceCount);// 4
+		this.setSequenceCount(sequenceCount);
 		this.setSpeedX(speedX); // 22
 		this.setHeigth(heigth);// 151
 		this.setWidth(width);// 152
@@ -24,5 +24,6 @@ public class HorseRider extends CComponent {
 		}
 
 	}
+	
 
 }
